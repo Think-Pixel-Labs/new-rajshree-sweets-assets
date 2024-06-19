@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-const imageCompressionSettings = { width: 500, height: 500, quality: 80, lossless: true, fit: 'cover' };
+const imageCompressionSettings = { width: 500, height: 500, quality: 50, lossless: false, fit: 'cover' };
 const folderNames = [
     "Chamcham",
     "Chhena Chap",
