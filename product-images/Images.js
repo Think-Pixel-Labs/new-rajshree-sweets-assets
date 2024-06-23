@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-const imageCompressionSettings = { width: 500, height: 500, quality: 50, lossless: false, fit: 'cover' };
+const imageCompressionSettings = { width: 350, height: 350, quality: 75, lossless: false, fit: 'cover' };
 const folderNames = [
     "Chamcham",
     "Chhena Chap",
@@ -34,7 +34,7 @@ const folderNames = [
     "Bundi Laddoo",
     "Chana Bite",
     "Chana Mewa Laddoo",
-    "Chandra Kala",
+    "Chandrakala",
     "Coconut Laddoo",
     "Feni",
     "Ghevar Malai",
@@ -181,7 +181,7 @@ const folderNames = [
     "Chikki Mix",
     "Kaju Mix",
     "Khowa Mix",
-    "Achari Mathri",
+    "Achari Mathari",
     "Chiwda Namkeen",
     "Hari Namkeen",
     "Kaju Masala",
@@ -206,10 +206,10 @@ const folderNames = [
     "Petha Gilori",
     "Petha Roll",
     "Santra Barfi",
-    "1 Pcs Laddu Special Box",
-    "2 Pcs Laddu Special Box",
-    "3 Pcs Laddu Special Box",
-    "4 Pcs Laddu Special Box",
+    "1 Pcs Laddoo Special Box",
+    "2 Pcs Laddoo Special Box",
+    "3 Pcs Laddoo Special Box",
+    "4 Pcs Laddoo Special Box",
     "Khaja",
     "Meetha Math",
     "Namkeen Math",
@@ -248,8 +248,8 @@ const folderNames = [
     "Dal Biji Namkeen",
     "Heeng Papdi Namkeen",
     "Mixture Namkeen",
-    "Palak Mathri",
-    "Methi Mathri",
+    "Palak Mathari",
+    "Methi Mathari",
 ];
 
 const readline = require('readline').createInterface({
