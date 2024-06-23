@@ -167,11 +167,16 @@ async function deleteEmptyFolders(dirPath) {
     try {
         const files = await fs.readdir(dirPath);
         await Promise.all(files.map(async (file) => {
+            // Skip hidden files
+            if (file.startsWith('.')) return;
+
             const filePath = path.join(dirPath, file);
             const stat = await fs.stat(filePath);
             if (stat.isDirectory()) {
                 const filesInFolder = await fs.readdir(filePath);
-                if (filesInFolder.length === 0) {
+                // Filter out hidden files in the folder
+                const visibleFiles = filesInFolder.filter(f => !f.startsWith('.'));
+                if (visibleFiles.length === 0) {
                     await fs.rmdir(filePath);
                     console.log(`Deleted empty folder ${filePath}`);
                 }
