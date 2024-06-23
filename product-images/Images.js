@@ -257,7 +257,7 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 
-readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n', operation => {
+readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n6. Delete Empty Folders\n', operation => {
     switch (operation) {
         case '1':
             createFolders();
@@ -273,6 +273,9 @@ readline.question('Please enter the operation number: \n1. Create folders \n2. R
             break;
         case '5':
             changeExtensionsToLowercase(__dirname);
+            break;
+        case '6':
+            deleteEmptyFolders(__dirname);
             break;
         default:
             console.log('Invalid operation');
@@ -380,5 +383,24 @@ async function convertAndCropImages(settings) {
         } catch (err) {
             console.error(`Failed to convert and crop images in folder ${folder}: ${err}`);
         }
+    }
+}
+
+const deleteEmptyFolders = async (dirPath) => {
+    try {
+        const files = await fs.readdir(dirPath);
+        for (const file of files) {
+            const filePath = path.join(dirPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                const filesInFolder = await fs.readdir(filePath);
+                if (filesInFolder.length === 0) {
+                    await fs.rmdir(filePath);
+                    console.log(`Deleted empty folder ${filePath}`);
+                }
+            }
+        }
+    } catch (err) {
+        console.error(`Failed to delete empty folders: ${err}`);
     }
 }
