@@ -257,7 +257,7 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 
-readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n6. Delete Empty Folders\n', operation => {
+readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n6. Delete Empty Folders\n7. Delete Webp Files\n', operation => {
     switch (operation) {
         case '1':
             createFolders();
@@ -276,6 +276,9 @@ readline.question('Please enter the operation number: \n1. Create folders \n2. R
             break;
         case '6':
             deleteEmptyFolders(__dirname);
+            break;
+        case '7':
+            deleteWebpFilesIfNonWebpExists(__dirname);
             break;
         default:
             console.log('Invalid operation');
@@ -368,7 +371,7 @@ async function convertAndCropImages(settings) {
                 const stat = await fs.stat(filePath);
                 if (stat.isFile()) {
                     const extension = path.extname(filePath);
-                    if (imageExtensions.includes(extension.toLowerCase())) {
+                    if (extension.toLowerCase() === '.jpg') {
                         const outputPath = path.join(folderPath, `${path.basename(file, extension)}.webp`);
                         console.log(`Converting and cropping file ${file}`);
                         await sharp(filePath)
@@ -404,3 +407,42 @@ const deleteEmptyFolders = async (dirPath) => {
         console.error(`Failed to delete empty folders: ${err}`);
     }
 }
+
+const deleteWebpFilesIfNonWebpExists = async (dirPath) => {
+    try {
+        const files = await fs.readdir(dirPath);
+        let containsNonWebpFile = false;
+
+        // First pass to check for non-webp files
+        for (const file of files) {
+            const filePath = path.join(dirPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                // Recursively handle directories
+                await deleteWebpFilesIfNonWebpExists(filePath);
+            } else {
+                const extension = path.extname(filePath);
+                if (extension.toLowerCase() !== '.webp') {
+                    containsNonWebpFile = true;
+                }
+            }
+        }
+
+        // If a non-webp file exists, proceed to delete webp files
+        if (containsNonWebpFile) {
+            for (const file of files) {
+                const filePath = path.join(dirPath, file);
+                const stat = await fs.stat(filePath);
+                if (!stat.isDirectory()) {
+                    const extension = path.extname(filePath);
+                    if (extension.toLowerCase() === '.webp') {
+                        await fs.unlink(filePath);
+                        console.log(`Deleted file ${filePath}`);
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.error(`Failed to delete webp files: ${err}`);
+    }
+};
