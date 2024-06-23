@@ -257,7 +257,7 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 
-readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n', operation => {
+readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n', operation => {
     switch (operation) {
         case '1':
             createFolders();
@@ -270,6 +270,9 @@ readline.question('Please enter the operation number: \n1. Create folders \n2. R
             break;
         case '4':
             convertAndCropImages(imageCompressionSettings);
+            break;
+        case '5':
+            changeExtensionsToLowercase(__dirname);
             break;
         default:
             console.log('Invalid operation');
@@ -329,6 +332,27 @@ async function moveFilesToFolder() {
         console.error(`Failed to move files to folder: ${err}`);
     }
 }
+
+const changeExtensionsToLowercase = async (dirPath) => {
+    try {
+        const files = await fs.readdir(dirPath);
+        for (const file of files) {
+            const filePath = path.join(dirPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                await changeExtensionsToLowercase(filePath);
+            } else {
+                const extension = path.extname(filePath);
+                if (imageExtensions.includes(extension.toLowerCase())) {
+                    const newFilePath = path.join(dirPath, `${path.basename(file, extension)}${extension.toLowerCase()}`);
+                    await fs.rename(filePath, newFilePath);
+                }
+            }
+        }
+    } catch (err) {
+        console.error(`Failed to change extensions to lowercase: ${err}`);
+    }
+};
 
 async function convertAndCropImages(settings) {
     for (const folder of folderNames) {
