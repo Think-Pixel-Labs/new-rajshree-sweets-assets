@@ -1,275 +1,42 @@
 const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');
+const readline = require('readline');
 
-const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-const imageCompressionSettings = { width: 350, height: 350, quality: 100, lossless: true, fit: 'cover' };
-const folderNames = [
-    "Chamcham",
-    "Chhena Chap",
-    "Chhena Phool",
-    "Chhena Roll",
-    "Chhena Sandwich",
-    "Kala Jamun",
-    "Kheer Kadam",
-    "Kheer Mohan",
-    "Malai Rasmadhuri",
-    "Manchali",
-    "Rasmadhuri",
-    "Chhena Cup",
-    "Chhena Roll",
-    "Gulab Jamun",
-    "Gulab Rasgulla",
-    "Keshar Bhog",
-    "Orange Rasgulla",
-    "Rabdi Ras Malai",
-    "Raj Bhog",
-    "Ras Malai",
-    "Rasgulla",
-    "Alsi Laddoo",
-    "Balu Shahi",
-    "Bari Bundi",
-    "Battisha",
-    "Besan Laddoo",
-    "Bundi Laddoo",
-    "Chana Bite",
-    "Chana Mewa Laddoo",
-    "Chandrakala",
-    "Coconut Laddoo",
-    "Feni",
-    "Ghevar Malai",
-    "Ghevar Sada",
-    "Gond Laddoo",
-    "Hara Mewa Laddoo",
-    "Imarti",
-    "Irani Laddoo",
-    "Jodhpuri Laddoo",
-    "Khurma",
-    "Lachha Sohan Papdi",
-    "Laung Latta",
-    "Magdal",
-    "Maysore Pak",
-    "Mini Gujhiya",
-    "Moong Mewa Laddoo",
-    "Navratan Gujhiya",
-    "Navratan Laddoo",
-    "Pinni",
-    "Rasili Potli",
-    "Sadi Gujhiya",
-    "Sohan Halwa Mawa",
-    "Sohan Roll",
-    "Sonth Laddoo",
-    "Sugar Free Gujhiya",
-    "Tirangi Gujhiya",
-    "Akhrot",
-    "Anjeer",
-    "Badam",
-    "Chuara",
-    "Kaju",
-    "Kismis",
-    "Makhana",
-    "Nariyal Gola",
-    "Pista Salted",
-    "Special Mewa Pack",
-    "Chocolate Gajak",
-    "Gajak Biscuit",
-    "Gajak Cone",
-    "Gajak Gujhiya",
-    "Gajak Roll",
-    "Moongfali Chikki",
-    "Orange Gajak",
-    "Til Barfi",
-    "Til Chikki",
-    "Til Gajak",
-    "Til Laddoo",
-    "Tilbugga",
-    "Badam Halwa",
-    "Gajar Halwa",
-    "Moong Halwa",
-    "Badam Milk Shake",
-    "Keshariya Kulfi",
-    "Keshariya Kulfi Pack",
-    "Rabdi Kulfi",
-    "Rabdi Kulfi Pack",
-    "Akhrot Barfi",
-    "Anjeer Roll",
-    "Anjeer Gilori",
-    "Anjeer Gujhiya",
-    "Badam Barfi",
-    "Badshah Basant",
-    "Fruit Laddoo",
-    "Gulab Chikki",
-    "Gulab Mewa Laddoo",
-    "Kaju Anjeer Barfi",
-    "Kaju Barfi",
-    "Kaju Biscuit",
-    "Kaju Choclate Laddoo",
-    "Kaju Chocolate Bite",
-    "Kaju Diamond",
-    "Kaju Diya",
-    "Kaju Gujhiya",
-    "Kaju Gulkand",
-    "Kaju Jalebi",
-    "Kaju Kadam",
-    "Kaju Kalash",
-    "Kaju Kamal",
-    "Kaju Keshar",
-    "Kaju Keshar Pista Barfi",
-    "Kaju Khaskhas",
-    "Kaju Lemon",
-    "Kaju Mango",
-    "Kaju Mewa Bite",
-    "Kaju Navrang",
-    "Kaju Orange Sohan Halwa",
-    "Kaju Phool",
-    "Kaju Rose",
-    "Kaju Samosa",
-    "Kaju Sohan Halwa",
-    "Kaju Star",
-    "Kaju Sunflower",
-    "Kaju Tirangi Barfi",
-    "Khajur Laddoo",
-    "Malai Cake",
-    "Malai Fruiti",
-    "Malai Gilori",
-    "Malai Sandwich",
-    "Mewa Chikki",
-    "Pista Badshah Basant",
-    "Pista Barfi",
-    "Pista Cone",
-    "Pista Gillori",
-    "Pista Roll",
-    "Pizzi Barfi",
-    "Badam Bahar Barfi",
-    "Basant Bahar",
-    "Chocolate Barfi",
-    "Dil Bahar Barfi",
-    "Dil Khush Barfi",
-    "Doda Barfi",
-    "Dudhiya Barfi",
-    "Elaichi Peda",
-    "Kalakand",
-    "Karachi Halwa",
-    "Karam Shahi Barfi",
-    "Keshar Peda",
-    "Khowa Cutlet",
-    "Khowa Gilori",
-    "Khowa Kadam",
-    "Khowa Khinni",
-    "Khowa Mewa Laddoo",
-    "Khowa Parwal",
-    "Khowa Plain Barfi",
-    "Khowa Roll",
-    "Lal Peda",
-    "Lauki Mewa Laddoo",
-    "Madhumati",
-    "Malai Barfi",
-    "Malpua",
-    "Mathura Peda",
-    "Milk Cake",
-    "Milk Pudding",
-    "Moti Pag Barfi",
-    "Nariyal Barfi",
-    "Punjab Bahar",
-    "Radhapriya Barfi",
-    "Raj Bahar",
-    "Safed Peda",
-    "Sandesh Barfi",
-    "Sheesh Bahar",
-    "Tirangi Barfi",
-    "Chhena Mix",
-    "Chikki Mix",
-    "Kaju Mix",
-    "Khowa Mix",
-    "Achari Mathari",
-    "Chiwda Namkeen",
-    "Hari Namkeen",
-    "Kaju Masala",
-    "Kaju Salted",
-    "Karela Namkeen",
-    "Khasta",
-    "Lachha Badam Namkeen",
-    "Makhan Bari",
-    "Masoor Namkeen",
-    "Matri Namkeen",
-    "Mewa Falahari Namkeen",
-    "Namakpara",
-    "Namkeen Bhujiya",
-    "Navratan Namkeen",
-    "Samosi Namkeen",
-    "Sem Beej",
-    "Sohal",
-    "Angoori Petha",
-    "Parwal",
-    "Petha",
-    "Petha Gareri",
-    "Petha Gilori",
-    "Petha Roll",
-    "Santra Barfi",
-    "1 Pcs Laddoo Special Box",
-    "2 Pcs Laddoo Special Box",
-    "3 Pcs Laddoo Special Box",
-    "4 Pcs Laddoo Special Box",
-    "Khaja",
-    "Meetha Math",
-    "Namkeen Math",
-    "Sada Math",
-    "Basket Chaat",
-    "Bhalla Papri",
-    "Chhola Samosa",
-    "Cutlet",
-    "Dahi Bada",
-    "Dahi Bhalla",
-    "Dahi Tikki",
-    "Half Dahi Bhalla",
-    "Half Dahi Tikki",
-    "Khasta Dam Aloo",
-    "Matar Paneer Samosa",
-    "Matar Tikki",
-    "Palak Chaat",
-    "Paneer Patties",
-    "Papri Chaat",
-    "Plain Dhokla",
-    "Ragda Patties",
-    "Raj Kachauri",
-    "Samosa",
-    "Sandwich Dhokla",
-    "Sandwich Samosa",
-    "Sonth Papdi Chaat",
-    "Amawat Laddoo",
-    "Chocolate Punjab Bahar",
-    "Khowa Katori",
-    "Kaju Badamkali",
-    "Gathiya Sev",
-    "Special Tasty Namkeen",
-    "Moong Mewa Namkeen",
-    "Falhari Namkeen",
-    "Roasted Chiwda Namkeen",
-    "Dal Biji Namkeen",
-    "Heeng Papdi Namkeen",
-    "Mixture Namkeen",
-    "Palak Mathari",
-    "Methi Mathari",
-];
+const imageExtensions = ['.jpg'];
+const imageCompressionSettings = { width: 500, height: 500, quality: 100, lossless: true, fit: 'cover' };
+const folderNames = [];
 
-const readline = require('readline').createInterface({
+const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-readline.question('Please enter the operation number: \n1. Create folders \n2. Rename images \n3. Move files to folder \n4. Convert all the images to webp\n5. Change extensions to Lowercase\n6. Delete Empty Folders\n7. Delete Webp Files\n', operation => {
+rl.question(`Please enter the operation number: 
+1. Create folders 
+2. Rename images 
+3. Move files to folder 
+4. Convert all the images to webp
+5. Change extensions to Lowercase
+6. Delete Empty Folders
+7. Delete Webp Files\n`, (operation) => {
+    handleOperation(operation);
+    rl.close();
+});
+
+function handleOperation(operation) {
     switch (operation) {
         case '1':
             createFolders();
             break;
         case '2':
-            renameImages();
+            renameImagesInFolder();
             break;
         case '3':
             moveFilesToFolder();
             break;
         case '4':
-            convertAndCropImages(imageCompressionSettings);
+            convertAndCropImagesInFolder(__dirname, imageCompressionSettings);
             break;
         case '5':
             changeExtensionsToLowercase(__dirname);
@@ -283,116 +50,119 @@ readline.question('Please enter the operation number: \n1. Create folders \n2. R
         default:
             console.log('Invalid operation');
     }
-    readline.close();
-});
+}
 
 async function createFolders() {
-    for (const folder of folderNames) {
-        const folderPath = path.join(__dirname, folder);
-        try {
+    try {
+        await Promise.all(folderNames.map(async (folder) => {
+            const folderPath = path.join(__dirname, folder);
             await fs.mkdir(folderPath, { recursive: true });
-        } catch (err) {
-            console.error(`Failed to create folder ${folder}: ${err}`);
-        }
+        }));
+    } catch (err) {
+        console.error(`Failed to create folders: ${err}`);
     }
 }
 
-async function renameImages() {
-    for (const folder of folderNames) {
-        const folderPath = path.join(__dirname, folder);
-        try {
-            const files = await fs.readdir(folderPath);
-            let imageNumber = 1;
-            for (const file of files) {
-                const oldPath = path.join(folderPath, file);
-                const extension = path.extname(oldPath);
-                if (imageExtensions.includes(extension.toLowerCase())) {
+async function renameImagesInFolder(folderPath) {
+    try {
+        const files = await fs.readdir(folderPath);
+        let imageNumber = 1;
+
+        await Promise.all(files.map(async (file) => {
+            const filePath = path.join(folderPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                await renameImagesInFolder(filePath);
+            } else {
+                const extension = path.extname(filePath).toLowerCase();
+                if (imageExtensions.includes(extension)) {
                     const newPath = path.join(folderPath, `${imageNumber}${extension}`);
-                    await fs.rename(oldPath, newPath);
+                    await fs.rename(filePath, newPath);
                     imageNumber++;
                 }
             }
-        } catch (err) {
-            console.error(`Failed to rename images in folder ${folder}: ${err}`);
-        }
+        }));
+    } catch (err) {
+        console.error(`Failed to rename images in folder ${folderPath}: ${err}`);
     }
 }
 
 async function moveFilesToFolder() {
     try {
         const files = await fs.readdir(__dirname);
-        for (const file of files) {
+        await Promise.all(files.map(async (file) => {
             const filePath = path.join(__dirname, file);
             const stat = await fs.stat(filePath);
             if (stat.isFile()) {
-                const extension = path.extname(filePath);
-                if (imageExtensions.includes(extension.toLowerCase())) {
-                    const folderPath = path.join(__dirname, path.basename(filePath, extension));
+                const extension = path.extname(filePath).toLowerCase();
+                if (imageExtensions.includes(extension)) {
+                    const baseName = path.basename(filePath, extension);
+                    const folderName = baseName.replace(/ - \d+$/, '');
+                    const folderPath = path.join(__dirname, folderName);
                     await fs.mkdir(folderPath, { recursive: true });
                     const newFilePath = path.join(folderPath, file);
                     await fs.rename(filePath, newFilePath);
                 }
             }
-        }
+        }));
     } catch (err) {
         console.error(`Failed to move files to folder: ${err}`);
     }
 }
 
-const changeExtensionsToLowercase = async (dirPath) => {
+async function changeExtensionsToLowercase(dirPath) {
     try {
         const files = await fs.readdir(dirPath);
-        for (const file of files) {
+        await Promise.all(files.map(async (file) => {
             const filePath = path.join(dirPath, file);
             const stat = await fs.stat(filePath);
             if (stat.isDirectory()) {
                 await changeExtensionsToLowercase(filePath);
             } else {
-                const extension = path.extname(filePath);
-                if (imageExtensions.includes(extension.toLowerCase())) {
-                    const newFilePath = path.join(dirPath, `${path.basename(file, extension)}${extension.toLowerCase()}`);
+                const extension = path.extname(filePath).toLowerCase();
+                if (imageExtensions.includes(extension)) {
+                    const newFilePath = path.join(dirPath, `${path.basename(file, extension)}${extension}`);
                     await fs.rename(filePath, newFilePath);
                 }
             }
-        }
+        }));
     } catch (err) {
         console.error(`Failed to change extensions to lowercase: ${err}`);
     }
-};
+}
 
-async function convertAndCropImages(settings) {
-    for (const folder of folderNames) {
-        const folderPath = path.join(__dirname, folder);
-        try {
-            const files = await fs.readdir(folderPath);
-            console.log(`Processing ${files.length} files in folder ${folder}`);
-            for (const file of files) {
-                const filePath = path.join(folderPath, file);
-                const stat = await fs.stat(filePath);
-                if (stat.isFile()) {
-                    const extension = path.extname(filePath);
-                    if (extension.toLowerCase() === '.jpg') {
-                        const outputPath = path.join(folderPath, `${path.basename(file, extension)}.webp`);
-                        console.log(`Converting and cropping file ${file}`);
-                        await sharp(filePath)
-                            .resize({ width: settings.width, height: settings.height, fit: settings.fit })
-                            .webp({ quality: settings.quality, lossless: settings.lossless })
-                            .toFile(outputPath);
-                        console.log(`Finished converting and cropping file ${file}`);
-                    }
-                }
+async function convertAndCropImagesInFolder(folderPath, settings) {
+    try {
+        const files = await fs.readdir(folderPath);
+        await Promise.all(files.map(async (file) => {
+            const filePath = path.join(folderPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                await convertAndCropImagesInFolder(filePath, settings);
+            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase())) {
+                const outputPath = path.join(folderPath, `${path.basename(file, path.extname(file))}.webp`);
+                await sharp(filePath)
+                    .resize({
+                        width: settings.width,
+                        height: settings.height,
+                        fit: settings.fit
+                    })
+                    .webp({
+                        quality: settings.quality,
+                        lossless: settings.lossless
+                    })
+                    .toFile(outputPath);
             }
-            console.log(`Finished processing files in folder ${folder}`);
-        } catch (err) {
-            console.error(`Failed to convert and crop images in folder ${folder}: ${err}`);
-        }
+        }));
+    } catch (err) {
+        console.error(`Failed to convert and crop images in folder ${folderPath}: ${err}`);
     }
 }
 
-const deleteEmptyFolders = async (dirPath) => {
+async function deleteEmptyFolders(dirPath) {
     try {
         const files = await fs.readdir(dirPath);
-        for (const file of files) {
+        await Promise.all(files.map(async (file) => {
             const filePath = path.join(dirPath, file);
             const stat = await fs.stat(filePath);
             if (stat.isDirectory()) {
@@ -402,47 +172,37 @@ const deleteEmptyFolders = async (dirPath) => {
                     console.log(`Deleted empty folder ${filePath}`);
                 }
             }
-        }
+        }));
     } catch (err) {
         console.error(`Failed to delete empty folders: ${err}`);
     }
 }
 
-const deleteWebpFilesIfNonWebpExists = async (dirPath) => {
+async function deleteWebpFilesIfNonWebpExists(dirPath) {
     try {
         const files = await fs.readdir(dirPath);
         let containsNonWebpFile = false;
 
-        // First pass to check for non-webp files
-        for (const file of files) {
+        await Promise.all(files.map(async (file) => {
             const filePath = path.join(dirPath, file);
             const stat = await fs.stat(filePath);
             if (stat.isDirectory()) {
-                // Recursively handle directories
                 await deleteWebpFilesIfNonWebpExists(filePath);
-            } else {
-                const extension = path.extname(filePath);
-                if (extension.toLowerCase() !== '.webp') {
-                    containsNonWebpFile = true;
-                }
+            } else if (path.extname(filePath).toLowerCase() !== '.webp') {
+                containsNonWebpFile = true;
             }
-        }
+        }));
 
-        // If a non-webp file exists, proceed to delete webp files
         if (containsNonWebpFile) {
-            for (const file of files) {
+            await Promise.all(files.map(async (file) => {
                 const filePath = path.join(dirPath, file);
-                const stat = await fs.stat(filePath);
-                if (!stat.isDirectory()) {
-                    const extension = path.extname(filePath);
-                    if (extension.toLowerCase() === '.webp') {
-                        await fs.unlink(filePath);
-                        console.log(`Deleted file ${filePath}`);
-                    }
+                if (!await fs.stat(filePath).then(stat => stat.isDirectory()) && path.extname(filePath).toLowerCase() === '.webp') {
+                    await fs.unlink(filePath);
+                    console.log(`Deleted file ${filePath}`);
                 }
-            }
+            }));
         }
     } catch (err) {
         console.error(`Failed to delete webp files: ${err}`);
     }
-};
+}
