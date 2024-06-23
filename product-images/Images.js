@@ -19,7 +19,8 @@ rl.question(`Please enter the operation number:
 4. Convert all the images to webp
 5. Change extensions to Lowercase
 6. Delete Empty Folders
-7. Delete Webp Files\n`, (operation) => {
+7. Delete Webp Files
+8. Get All the Folder Names\n`, (operation) => {
     handleOperation(operation);
     rl.close();
 });
@@ -46,6 +47,9 @@ function handleOperation(operation) {
             break;
         case '7':
             deleteWebpFilesIfNonWebpExists(__dirname);
+            break;
+        case '8':
+            getFolderNames();
             break;
         default:
             console.log('Invalid operation');
@@ -204,5 +208,20 @@ async function deleteWebpFilesIfNonWebpExists(dirPath) {
         }
     } catch (err) {
         console.error(`Failed to delete webp files: ${err}`);
+    }
+}
+
+async function getFolderNames() {
+    try {
+        const files = await fs.readdir(__dirname);
+        await Promise.all(files.map(async (file) => {
+            const stat = await fs.stat(path.join(__dirname, file));
+            if (stat.isDirectory()) {
+                folderNames.push(file);
+            }
+        }));
+        fs.writeFile(path.join(__dirname, 'folder-names.json'), JSON.stringify(folderNames, null, 2));
+    } catch (err) {
+        console.error(`Failed to get folder names: ${err}`);
     }
 }
