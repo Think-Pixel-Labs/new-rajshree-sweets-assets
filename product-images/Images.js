@@ -20,7 +20,8 @@ rl.question(`Please enter the operation number:
 5. Change extensions to Lowercase
 6. Delete Empty Folders
 7. Delete Webp Files
-8. Get All the Folder Names\n`, (operation) => {
+8. Get All the Folder Names
+9. Convert all the images to webp without replacing old ones\n`, (operation) => {
     handleOperation(operation);
     rl.close();
 });
@@ -50,6 +51,9 @@ function handleOperation(operation) {
             break;
         case '8':
             getFolderNames();
+            break;
+        case '9':
+            convertAndCropImagesInFolderWithoutReplace(__dirname, imageCompressionSettings);
             break;
         default:
             console.log('Invalid operation');
@@ -228,5 +232,46 @@ async function getFolderNames() {
         fs.writeFile(path.join(__dirname, 'folder-names.json'), JSON.stringify(folderNames, null, 2));
     } catch (err) {
         console.error(`Failed to get folder names: ${err}`);
+    }
+}
+
+
+async function convertAndCropImagesInFolderWithoutReplace(folderPath, settings) {
+    try {
+        const files = await fs.readdir(folderPath);
+        await Promise.all(files.map(async (file) => {
+            const filePath = path.join(folderPath, file);
+            const stat = await fs.stat(filePath);
+            if (stat.isDirectory()) {
+                await convertAndCropImagesInFolderWithoutReplace(filePath, settings);
+            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase())) {
+                const outputPath = path.join(folderPath, `${path.basename(file, path.extname(file))}.webp`);
+                // Check if the .webp file already exists using a try-catch block
+                try {
+                    await fs.stat(outputPath);
+                    // If the stat succeeds, the file exists, so we do nothing
+                } catch (err) {
+                    // If the error code is 'ENOENT', the file does not exist, and we can proceed with conversion
+                    if (err.code === 'ENOENT') {
+                        await sharp(filePath)
+                            .resize({
+                                width: settings.width,
+                                height: settings.height,
+                                fit: settings.fit
+                            })
+                            .webp({
+                                quality: settings.quality,
+                                lossless: settings.lossless
+                            })
+                            .toFile(outputPath);
+                    } else {
+                        // If the error is not 'ENOENT', log it
+                        console.error(`Error checking for file existence: ${err}`);
+                    }
+                }
+            }
+        }));
+    } catch (err) {
+        console.error(`Failed to convert and crop images in folder ${folderPath}: ${err}`);
     }
 }
