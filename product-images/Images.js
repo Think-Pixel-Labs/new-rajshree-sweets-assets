@@ -4,7 +4,7 @@ const sharp = require('sharp');
 const readline = require('readline');
 
 const imageExtensions = ['.jpg'];
-const imageCompressionSettings = { width: 500, height: 500, quality: 100, lossless: true, fit: 'cover' };
+const imageCompressionSettings = { width: 300, height: 300, quality: 100, lossless: true, fit: 'cover' };
 const folderNames = [];
 
 const rl = readline.createInterface({
