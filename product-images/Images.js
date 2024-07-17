@@ -4,7 +4,7 @@ const sharp = require('sharp');
 const readline = require('readline');
 
 const imageExtensions = ['.jpg'];
-const imageCompressionSettings = { width: 300, height: 300, quality: 100, lossless: true, fit: 'cover' };
+const imageCompressionSettings = { width: 400, height: 400, quality: 100, lossless: true, fit: 'cover' };
 const folderNames = [];
 
 const rl = readline.createInterface({
@@ -160,6 +160,7 @@ async function convertAndCropImagesInFolder(folderPath, settings) {
                         lossless: settings.lossless
                     })
                     .toFile(outputPath);
+                console.log(`Converted and cropped image ${filePath} to ${outputPath}`);
             }
         }));
     } catch (err) {
