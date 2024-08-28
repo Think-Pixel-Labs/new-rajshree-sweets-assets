@@ -1,5 +1,5 @@
 # Rules for assets subdomain
 User-agent: *
-Disallow:
+Allow: /
 
 Host: assets.newrajshreesweets.com
