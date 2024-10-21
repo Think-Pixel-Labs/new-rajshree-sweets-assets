@@ -1,4 +1,4 @@
-To help us prepare your order, please let us know:
+To help us serve you better, please let us know:
 
 - What would you like to order and how much?
 - When do you need it delivered?
