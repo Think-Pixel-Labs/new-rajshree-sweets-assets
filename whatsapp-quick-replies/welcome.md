@@ -1,15 +1,15 @@
-Dear valued customer, welcome onboard! 🍬
+✨ *Welcome to New Rajshree Sweets!* ✨
 
-We're delighted to announce new ways to enjoy our delectable treats:
-•⁠  ⁠🌐 Visit our website: https://newrajshreesweets.com/shop
-•⁠  ⁠🍽️ Order via Zomato: https://www.zomato.com/varanasi/new-rajshree-sweets-nadesar
+Craving something sweet? We've made it easier than ever! 🍫
 
-Your feedback means a world to us:
-•⁠  ⁠⭐ Leave a review on Google: https://g.co/kgs/dc2mLt5
+Everything you need in one place:
+🛵 Order online (Swiggy/Zomato/Website)
+🎯 Browse our menu & website
+⭐ Share your experience
+💝 Connect with us
 
-Stay sweet! Follow us for updates:
-•⁠  ⁠📱 Social Media: https://links.newrajshreesweets.com/
-•⁠  ⁠📧 Email us: newrajshreesweetspvtltd@gmail.com 
+🔗 *Your Sweet Journey Starts Here:*
+https://links.newrajshreesweets.com
 
-Sweet Regards,
+Sweet regards,
 New Rajshree Sweets Team

@@ -1,15 +1,9 @@
-Dear Valued Customer,
+✨ *Thank You for Choosing New Rajshree Sweets!* ✨
 
-Thank you for choosing New Rajshree Sweets! 🍬
+We'd love your feedback and to stay connected! ⭐
 
-Your feedback means a world to us:
-⭐ Review us on Google: https://g.co/kgs/dc2mLt5
-
-Stay connected:
-📱 Social Media: https://links.newrajshreesweets.com
-📧 Email: newrajshreesweetspvtltd@gmail.com
-
-Looking forward to serving you again!
+🔗 Click below to know more:
+https://links.newrajshreesweets.com
 
 Sweet regards,
 New Rajshree Sweets Team

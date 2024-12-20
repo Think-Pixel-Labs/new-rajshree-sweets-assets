@@ -1,10 +1,12 @@
-To help us serve you better, please let us know:
+🎯 *Let's Get Your Order Right!*
 
-- What would you like to order and how much?
-- When do you need it delivered?
-- Where should we deliver it? (Please include your pincode)
+Please share:
+📦 Items & quantities
+📅 Delivery date & time 
+📍 Full address with pincode
+✨ Special occasion (if any)
 
-If it's for a special occasion, feel free to mention it. We're here to help if you have any questions!
+Questions? We're here to help!
 
-Thanks,
+Sweet regards,
 New Rajshree Sweets Team
