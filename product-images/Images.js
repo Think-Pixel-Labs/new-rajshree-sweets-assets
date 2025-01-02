@@ -21,7 +21,8 @@ rl.question(`Please enter the operation number:
 6. Delete Empty Folders
 7. Delete Webp Files
 8. Get All the Folder Names
-9. Convert all the images to webp without replacing old ones\n`, (operation) => {
+9. Convert all the images to webp without replacing old ones
+10. Convert images to 500x500 JPG\n`, (operation) => {
     handleOperation(operation);
     rl.close();
 });
@@ -54,6 +55,9 @@ function handleOperation(operation) {
             break;
         case '9':
             convertAndCropImagesInFolderWithoutReplace(__dirname, imageCompressionSettings);
+            break;
+        case '10':
+            convertToHighResJpg(__dirname);
             break;
         default:
             console.log('Invalid operation');
@@ -236,6 +240,52 @@ async function getFolderNames() {
     }
 }
 
+async function convertToHighResJpg(dirPath) {
+    try {
+        const files = await fs.readdir(dirPath);
+        await Promise.all(files.map(async (file) => {
+            const filePath = path.join(dirPath, file);
+            const stat = await fs.stat(filePath);
+
+            if (stat.isDirectory()) {
+                // Recursively process subdirectories
+                await convertToHighResJpg(filePath);
+            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase())) {
+                const outputPath = path.join(
+                    dirPath,
+                    `${path.basename(file, path.extname(file))}_500x500.jpg`
+                );
+
+                // Check if the converted file already exists
+                try {
+                    await fs.stat(outputPath);
+                    console.log(`File already exists: ${outputPath}`);
+                } catch (err) {
+                    if (err.code === 'ENOENT') {
+                        await sharp(filePath)
+                            .resize({
+                                width: 500,
+                                height: 500,
+                                fit: 'cover',    // This ensures the image covers the entire 500x500 area
+                                position: 'center' // This ensures the crop is centered
+                            })
+                            .jpeg({
+                                quality: 90,     // Slightly compressed for reasonable file size
+                                chromaSubsampling: '4:4:4' // Best color quality
+                            })
+                            .toFile(outputPath);
+
+                        console.log(`Converted image: ${filePath} -> ${outputPath}`);
+                    } else {
+                        console.error(`Error checking file existence: ${err}`);
+                    }
+                }
+            }
+        }));
+    } catch (err) {
+        console.error(`Failed to convert images to high-res JPG in folder ${dirPath}: ${err}`);
+    }
+}
 
 async function convertAndCropImagesInFolderWithoutReplace(folderPath, settings) {
     try {
