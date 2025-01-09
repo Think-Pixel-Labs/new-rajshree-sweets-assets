@@ -149,9 +149,10 @@ async function convertAndCropImagesInFolder(folderPath, settings) {
         await Promise.all(files.map(async (file) => {
             const filePath = path.join(folderPath, file);
             const stat = await fs.stat(filePath);
+            const fileName = path.basename(filePath);
             if (stat.isDirectory()) {
                 await convertAndCropImagesInFolder(filePath, settings);
-            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase())) {
+            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase()) && fileName === '1.jpg') {
                 const outputPath = path.join(folderPath, `${path.basename(file, path.extname(file))}.webp`);
                 await sharp(filePath)
                     .resize({
