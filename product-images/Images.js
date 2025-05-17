@@ -4,7 +4,7 @@ const sharp = require('sharp');
 const readline = require('readline');
 
 const imageExtensions = ['.jpg'];
-const imageCompressionSettings = { width: 400, height: 400, quality: 100, lossless: true, fit: 'cover' };
+const imageCompressionSettings = { width: 300, height: 300, quality: 100, lossless: true, fit: 'cover' };
 const folderNames = [];
 
 const rl = readline.createInterface({
@@ -22,7 +22,8 @@ rl.question(`Please enter the operation number:
 7. Delete Webp Files
 8. Get All the Folder Names
 9. Convert all the images to webp without replacing old ones
-10. Convert images to 500x500 JPG\n`, (operation) => {
+10. Convert images to 500x500 JPG
+11. Convert to optimized WebP images (recommended for web)\n`, (operation) => {
     handleOperation(operation);
     rl.close();
 });
@@ -58,6 +59,9 @@ function handleOperation(operation) {
             break;
         case '10':
             convertToHighResJpg(__dirname);
+            break;
+        case '11':
+            convertToOptimizedImages(__dirname);
             break;
         default:
             console.log('Invalid operation');
@@ -271,8 +275,8 @@ async function convertToHighResJpg(dirPath) {
                                 position: 'center' // This ensures the crop is centered
                             })
                             .jpeg({
-                                quality: 90,     // Slightly compressed for reasonable file size
-                                chromaSubsampling: '4:4:4' // Best color quality
+                                quality: 75,     // More compressed for better performance
+                                chromaSubsampling: '4:2:0' // Better compression with minimal visual loss
                             })
                             .toFile(outputPath);
 
@@ -325,5 +329,52 @@ async function convertAndCropImagesInFolderWithoutReplace(folderPath, settings) 
         }));
     } catch (err) {
         console.error(`Failed to convert and crop images in folder ${folderPath}: ${err}`);
+    }
+}
+
+async function convertToOptimizedImages(dirPath) {
+    try {
+        const files = await fs.readdir(dirPath);
+        await Promise.all(files.map(async (file) => {
+            const filePath = path.join(dirPath, file);
+            const stat = await fs.stat(filePath);
+
+            if (stat.isDirectory()) {
+                // Recursively process subdirectories
+                await convertToOptimizedImages(filePath);
+            } else if (stat.isFile() && imageExtensions.includes(path.extname(filePath).toLowerCase())) {
+                const outputPath = path.join(
+                    dirPath,
+                    `${path.basename(file, path.extname(file))}_optimized.webp`
+                );
+
+                // Check if the optimized file already exists
+                try {
+                    await fs.stat(outputPath);
+                    console.log(`Optimized file already exists: ${outputPath}`);
+                } catch (err) {
+                    if (err.code === 'ENOENT') {
+                        await sharp(filePath)
+                            .resize({
+                                width: 800,      // Reasonable size for web display
+                                height: 800,     // Maintain aspect ratio
+                                fit: 'inside',   // Don't crop, just fit within dimensions
+                                withoutEnlargement: true // Don't enlarge small images
+                            })
+                            .webp({
+                                quality: 75,     // Good balance between quality and file size
+                                effort: 6        // Higher compression effort (0-6)
+                            })
+                            .toFile(outputPath);
+
+                        console.log(`Created optimized image: ${filePath} -> ${outputPath}`);
+                    } else {
+                        console.error(`Error checking file existence: ${err}`);
+                    }
+                }
+            }
+        }));
+    } catch (err) {
+        console.error(`Failed to convert to optimized images in folder ${dirPath}: ${err}`);
     }
 }
