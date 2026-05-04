@@ -151,12 +151,20 @@ async function findMissingWebpJobs(dir) {
     return jobs
 }
 
-async function findFirstNumericImage(dir) {
+async function findFirstNumericImage(dir, excludedPath = null) {
     const entries = await fs.readdir(dir, { withFileTypes: true })
     const files = entries
-        .filter((entry) => entry.isFile() && numericImagePattern.test(entry.name))
+        .filter((entry) => {
+            if (!entry.isFile() || !numericImagePattern.test(entry.name)) return false
+            return path.join(dir, entry.name) !== excludedPath
+        })
         .map((entry) => entry.name)
-        .sort((a, b) => Number.parseInt(a, 10) - Number.parseInt(b, 10))
+        .sort((a, b) => {
+            const aIsJpg = /\.jpe?g$/i.test(a)
+            const bIsJpg = /\.jpe?g$/i.test(b)
+            if (aIsJpg !== bIsJpg) return aIsJpg ? -1 : 1
+            return Number.parseInt(a, 10) - Number.parseInt(b, 10)
+        })
 
     if (files.length > 0) {
         return path.join(dir, files[0])
@@ -167,7 +175,7 @@ async function findFirstNumericImage(dir) {
             continue
         }
 
-        const found = await findFirstNumericImage(path.join(dir, entry.name))
+        const found = await findFirstNumericImage(path.join(dir, entry.name), excludedPath)
         if (found) return found
     }
 
@@ -198,7 +206,7 @@ async function findCoverJobs() {
             continue
         }
 
-        const inputPath = await findFirstNumericImage(productDir)
+        const inputPath = await findFirstNumericImage(productDir, outputPath)
         if (!inputPath) {
             continue
         }
