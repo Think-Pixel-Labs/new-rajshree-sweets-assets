@@ -1,0 +1,15 @@
+{
+  "name": "nrs-assets2-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Caching reverse-proxy Worker that serves New Rajshree Sweets static assets on assets2.newrajshreesweets.com to bypass ISP SNI/DNS hijacking.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "check": "wrangler check"
+  },
+  "devDependencies": {
+    "wrangler": "^4.100.0"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "nrs-assets2-proxy",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-16",
+
+  // Bind assets2 to this Worker as a Custom Domain.
+  // custom_domain: true makes Cloudflare auto-create the PROXIED (orange-cloud)
+  // DNS record for assets2 + the route. This is what bypasses Airtel's
+  // SNI/DNS hijack of the old "assets." hostname.
+  "routes": [
+    {
+      "pattern": "assets2.newrajshreesweets.com",
+      "custom_domain": true
+    }
+  ],
+
+  "vars": {
+    // Where the Worker pulls the real files from (server-side fetch from
+    // Cloudflare's edge -> not subject to any ISP filtering in India).
+    "ORIGIN": "https://assets.newrajshreesweets.com",
+
+    // How long Cloudflare's edge keeps a copy (seconds). 30 days.
+    "EDGE_TTL": "2592000",
+
+    // How long the visitor's browser keeps a copy (seconds). 1 day,
+    // so content updates still propagate within 24h without a purge.
+    "BROWSER_TTL": "86400",
+
+    // Comma-separated allowed CORS origins, or "*" for any site.
+    "ALLOW_ORIGIN": "*"
+  },
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
