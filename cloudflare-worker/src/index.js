@@ -109,6 +109,11 @@ function decorate(originResp, env, browserTtl, cacheState) {
     } else {
       response.headers.set("Cache-Control", "public, max-age=300");
     }
+    // ponytail: raw.githubusercontent.com may send text/plain for .webp
+    if (/\.webp$/i.test(url.pathname)) {
+      const ct = response.headers.get("content-type") || "";
+      if (!ct.includes("image")) response.headers.set("Content-Type", "image/webp");
+    }
   }
 
   // CORS so the assets load cross-origin from the main website.

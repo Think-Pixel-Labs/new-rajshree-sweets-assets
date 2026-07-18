@@ -5,10 +5,10 @@
   "compatibility_date": "2026-06-16",
 
   // IMPORTANT: Do NOT add an "assets" / static directory here.
-  // This Worker is a caching reverse-proxy to GitHub Pages
-  // (https://assets.newrajshreesweets.com). Uploading the repo as
-  // Workers Static Assets fails (videos/*.mp4 > 25 MiB) and would
-  // duplicate the wrong delivery path.
+  // This Worker is a caching reverse-proxy. Uploading the repo as
+  // Workers Static Assets fails (videos/*.mp4 > 25 MiB).
+  // ORIGIN uses raw GitHub so optimized WebPs go live even when
+  // GitHub Pages cannot publish the full main tree.
 
   "routes": [
     {
@@ -18,7 +18,7 @@
   ],
 
   "vars": {
-    "ORIGIN": "https://assets.newrajshreesweets.com",
+    "ORIGIN": "https://raw.githubusercontent.com/Think-Pixel-Labs/new-rajshree-sweets-assets/main",
     "EDGE_TTL": "2592000",
     "BROWSER_TTL": "86400",
     "ALLOW_ORIGIN": "*"

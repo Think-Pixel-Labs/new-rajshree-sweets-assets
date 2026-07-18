@@ -1,0 +1,50 @@
+# ponytail: publish only CDN WebPs (~150MB), not JPG masters/videos (~3.5GB+)
+# Legacy Pages soft-fails when the whole main tree is uploaded.
+name: Deploy CDN to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble slim CDN tree
+        run: |
+          set -euo pipefail
+          mkdir -p _cdn
+          for f in index.html CNAME robots.txt .nojekyll \
+            icon.webp exterior.webp interior.webp logo.webp favicon.webp \
+            apple-touch-icon.webp logo-email.png; do
+            [ -e "$f" ] && cp -a "$f" _cdn/
+          done
+          for d in gallery-images product-categories product-images icon slider-images \
+                   social-media-logos loader about-us misc google-business whatsapp-quick-replies; do
+            [ -d "$d" ] || continue
+            rsync -a --exclude 'node_modules' --exclude '.DS_Store' \
+              --exclude '*.jpg' --exclude '*.JPG' --exclude '*.jpeg' --exclude '*.JPEG' \
+              "$d/" "_cdn/$d/"
+          done
+          find _cdn -type f -name '*.mp4' -size +20M -delete || true
+          du -sh _cdn
+          find _cdn -type f | wc -l
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _cdn
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

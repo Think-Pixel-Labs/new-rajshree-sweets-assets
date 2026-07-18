@@ -4,10 +4,17 @@
 
 | Hostname | What serves it | What to change |
 | --- | --- | --- |
-| `assets.newrajshreesweets.com` | **GitHub Pages** (this repo, `main` / root) | Push WebP/image updates here |
-| `assets2.newrajshreesweets.com` | **Cloudflare Worker** `nrs-assets2-proxy` (caching reverse-proxy) | Deploy Worker code only — it fetches from Pages |
+| `assets.newrajshreesweets.com` | **GitHub Pages** (slim Actions publish) | Push WebP updates; workflow publishes `_cdn` |
+| `assets2.newrajshreesweets.com` | **Cloudflare Worker** `nrs-assets2-proxy` | Deploy Worker only; `ORIGIN` = raw GitHub `main` |
 
-The Worker does **not** host image/video files. It proxies and edge-caches the Pages origin so Airtel SNI/DNS issues on `assets.` are bypassed.
+The Worker does **not** host image/video files. It proxies and edge-caches origin so Airtel SNI/DNS issues on `assets.` are bypassed.
+
+## Pages publish (slim CDN)
+
+Full `main` is ~3.5GB+ (JPG masters + `videos/`), so legacy Pages builds fail.  
+`.github/workflows/pages.yml` publishes WebP-only (~150MB).
+
+**Once:** Settings → Pages → Build and deployment → **Source = GitHub Actions**.
 
 ## Cloudflare Workers Builds / `npx wrangler deploy`
 

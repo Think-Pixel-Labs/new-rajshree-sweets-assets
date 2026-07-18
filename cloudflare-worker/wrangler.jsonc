@@ -16,9 +16,8 @@
   ],
 
   "vars": {
-    // Where the Worker pulls the real files from (server-side fetch from
-    // Cloudflare's edge -> not subject to any ISP filtering in India).
-    "ORIGIN": "https://assets.newrajshreesweets.com",
+    // Pull optimized files from git main (bypasses flaky/oversized Pages builds).
+    "ORIGIN": "https://raw.githubusercontent.com/Think-Pixel-Labs/new-rajshree-sweets-assets/main",
 
     // How long Cloudflare's edge keeps a copy (seconds). 30 days.
     "EDGE_TTL": "2592000",
