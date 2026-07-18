@@ -19,8 +19,8 @@
 
   "vars": {
     "ORIGIN": "https://raw.githubusercontent.com/Think-Pixel-Labs/new-rajshree-sweets-assets/main",
-    "EDGE_TTL": "2592000",
-    "BROWSER_TTL": "86400",
+    "EDGE_TTL": "31536000",
+    "BROWSER_TTL": "31536000",
     "ALLOW_ORIGIN": "*"
   },
 

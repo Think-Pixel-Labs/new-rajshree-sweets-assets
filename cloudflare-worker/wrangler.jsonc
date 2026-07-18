@@ -19,12 +19,11 @@
     // Pull optimized files from git main (bypasses flaky/oversized Pages builds).
     "ORIGIN": "https://raw.githubusercontent.com/Think-Pixel-Labs/new-rajshree-sweets-assets/main",
 
-    // How long Cloudflare's edge keeps a copy (seconds). 30 days.
-    "EDGE_TTL": "2592000",
+    // How long Cloudflare's edge keeps a copy (seconds). 1 year.
+    "EDGE_TTL": "31536000",
 
-    // How long the visitor's browser keeps a copy (seconds). 1 day,
-    // so content updates still propagate within 24h without a purge.
-    "BROWSER_TTL": "86400",
+    // Browser TTL 1y + immutable; purge CF custom URLs after path-in-place replaces.
+    "BROWSER_TTL": "31536000",
 
     // Comma-separated allowed CORS origins, or "*" for any site.
     "ALLOW_ORIGIN": "*"

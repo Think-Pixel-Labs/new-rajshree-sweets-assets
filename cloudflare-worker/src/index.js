@@ -33,8 +33,8 @@ export default {
       });
     }
 
-    const edgeTtl = Number(env.EDGE_TTL || "2592000");
-    const browserTtl = Number(env.BROWSER_TTL || "86400");
+    const edgeTtl = Number(env.EDGE_TTL || "31536000");
+    const browserTtl = Number(env.BROWSER_TTL || "31536000");
     const originUrl = env.ORIGIN.replace(/\/$/, "") + url.pathname + url.search;
 
     // Range requests (e.g. video seeking) must not be served from a full-body
@@ -104,7 +104,7 @@ function decorate(originResp, env, browserTtl, cacheState) {
     if (IMMUTABLE_EXT.test(url.pathname)) {
       response.headers.set(
         "Cache-Control",
-        `public, max-age=${browserTtl}, stale-while-revalidate=604800`,
+        `public, max-age=${browserTtl}, immutable`,
       );
     } else {
       response.headers.set("Cache-Control", "public, max-age=300");

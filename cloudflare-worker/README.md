@@ -58,9 +58,9 @@ curl -I https://assets2.newrajshreesweets.com/logo.webp
 
 | var          | meaning                                            | default                              |
 | ------------ | -------------------------------------------------- | ------------------------------------ |
-| ORIGIN       | where real files live                              | https://assets.newrajshreesweets.com |
-| EDGE_TTL     | seconds Cloudflare keeps a copy                    | 2592000 (30d)                        |
-| BROWSER_TTL  | seconds the browser keeps a copy                   | 86400 (1d)                           |
+| ORIGIN       | where real files live                              | https://raw.githubusercontent.com/.../main |
+| EDGE_TTL     | seconds Cloudflare keeps a copy                    | 31536000 (1y)                              |
+| BROWSER_TTL  | seconds the browser keeps a copy                   | 31536000 (1y, immutable)                   |
 | ALLOW_ORIGIN | CORS origin (`*` or a specific site)               | *                                    |
 
 ## Updating assets
