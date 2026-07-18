@@ -1,0 +1,15 @@
+{
+  "name": "new-rajshree-sweets-assets",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CDN origin (GitHub Pages) + assets2 caching proxy Worker. Do not deploy the image/video tree as Workers Static Assets.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "deploy:proxy": "npm run deploy --prefix cloudflare-worker",
+    "dry-run": "wrangler deploy --dry-run",
+    "whoami": "wrangler whoami"
+  },
+  "devDependencies": {
+    "wrangler": "^4.100.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nrs-assets2-proxy",
+  "main": "cloudflare-worker/src/index.js",
+  "compatibility_date": "2026-06-16",
+
+  // IMPORTANT: Do NOT add an "assets" / static directory here.
+  // This Worker is a caching reverse-proxy to GitHub Pages
+  // (https://assets.newrajshreesweets.com). Uploading the repo as
+  // Workers Static Assets fails (videos/*.mp4 > 25 MiB) and would
+  // duplicate the wrong delivery path.
+
+  "routes": [
+    {
+      "pattern": "assets2.newrajshreesweets.com",
+      "custom_domain": true
+    }
+  ],
+
+  "vars": {
+    "ORIGIN": "https://assets.newrajshreesweets.com",
+    "EDGE_TTL": "2592000",
+    "BROWSER_TTL": "86400",
+    "ALLOW_ORIGIN": "*"
+  },
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

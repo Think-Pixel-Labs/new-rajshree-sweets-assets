@@ -1,1 +1,4 @@
 .DS_Store
+_opt-backup-*/
+node_modules/
+.wrangler/

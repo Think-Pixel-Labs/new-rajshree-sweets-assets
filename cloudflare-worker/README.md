@@ -34,6 +34,14 @@ npx wrangler login        # opens browser, authorize the NRS Cloudflare account
 npm run deploy            # = wrangler deploy
 ```
 
+## Cloudflare dashboard / CI
+
+Prefer the **repository root** deploy (`npm ci && npx wrangler deploy`) so Workers Builds
+uses the root `wrangler.jsonc` (proxy script only — no static asset upload).
+
+If the dashboard still has Framework=Static and Output Directory=`.`, clear those
+settings; this Worker must not publish the image/video tree.
+
 On the first deploy Wrangler:
 1. Uploads the Worker.
 2. Creates the **proxied** DNS record for `assets2.newrajshreesweets.com`.
